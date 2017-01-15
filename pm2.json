@@ -1,0 +1,16 @@
+{
+  "apps" : [
+    {
+      "name": "⛭ led",
+      "script": "npm",
+      "args": "start",
+      "exec_mode": "fork",
+      "env": {
+        "LED_ENV": "development"
+      },
+      "env_development": {
+        "LED_ENV": "development",
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "led",
+  "version": "0.0.0",
+  "description": "Led blinking",
+  "main": "led.js",
+  "scripts": {
+    "build": "npm run clean && babel src/ -d build/ && npm run copy",
+    "copy": "./copy.sh",
+    "clean": "rm -rf build",
+    "start": "npm run build && node ./build/led.js",
+    "debug": "npm run start"
+  },
+  "keywords": [
+    "rpi"
+  ],
+  "author": "Max Korinets",
+  "license": "ISC",
+  "dependencies": {
+    "infinite-loop": "^0.2.2",
+    "lodash": "^4.17.4",
+    "node-cmd": "^1.2.0",
+    "rpi-leds": "0.0.3"
+  },
+  "devDependencies": {
+    "flightplan": "^0.6.15",
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^2.13.1"
+  }
+}

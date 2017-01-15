@@ -1,0 +1,6 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "newline-per-chained-call": [0, { 'ignoreChainWithDepth': 3 }]
+  }
+}

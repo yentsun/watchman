@@ -17,7 +17,6 @@ plan.local(function(local) {
         silent: true
     });
     local.transfer(filesToCopy, plan.runtime.options.dir);
-    local.transfer('src/config/config.ini', plan.runtime.options.dir);
 });
 
 plan.remote(function(remote) {

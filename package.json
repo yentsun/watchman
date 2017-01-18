@@ -18,6 +18,8 @@
   "dependencies": {
     "infinite-loop": "^0.2.2",
     "lodash": "^4.17.4",
+    "moment": "^2.17.1",
+    "mqtt": "^2.2.1",
     "node-cmd": "^1.2.0",
     "rpi-leds": "0.0.3"
   },

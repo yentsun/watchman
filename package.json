@@ -1,13 +1,13 @@
 {
-  "name": "led",
+  "name": "watchman",
   "version": "0.0.0",
   "description": "Led blinking",
-  "main": "led.js",
+  "main": "watchman.js",
   "scripts": {
     "build": "npm run clean && babel src/ -d build/ && npm run copy",
     "copy": "./copy.sh",
     "clean": "rm -rf build",
-    "start": "npm run build && node ./build/led.js",
+    "start": "npm run build && node ./build/watchman.js",
     "debug": "npm run start"
   },
   "keywords": [

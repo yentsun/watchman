@@ -26,6 +26,8 @@ plan.remote(function(remote) {
         remote.exec('npm install');
         remote.log('pruning dependencies...');
         remote.exec('npm prune');
+        remote.log('linking agent...');
+        remote.exec('npm link ../isaax-agent-js');
         remote.log('reloading process...');
         remote.exec('pm2 reload pm2.json --env ' + plan.runtime.target);
     });

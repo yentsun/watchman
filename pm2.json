@@ -1,15 +1,13 @@
 {
   "apps" : [
     {
-      "name": "⛭ led",
+      "name": "⛭ watchman",
       "script": "npm",
       "args": "start",
       "exec_mode": "fork",
-      "env": {
-        "LED_ENV": "development"
-      },
-      "env_development": {
+      "env_media": {
         "LED_ENV": "development",
+        "ISAAX_LOG_LEVEL": "debug"
       }
     }
   ]

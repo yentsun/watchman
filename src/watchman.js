@@ -1,10 +1,11 @@
 import RpiLeds from 'rpi-leds';
+import {series} from 'async';
 import InfiniteLoop from 'infinite-loop';
 import cmd from 'node-cmd';
 import {includes} from 'lodash';
-import isaaxAgent from 'isaax-agent-js';
+import Isaax from 'isaax-agent-js';
 
-const isaax = isaaxAgent({
+const isaax = Isaax({
     jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaXNoIjpbImRldmljZS80MjBlNWNiMS0zYTAxLTRjNjItOGU1YS1mNzEzN2E4NWVmMTIvKyIsImRldmljZS84Y2M4MmUxNy1kODAyLTQzYjktOGFkZi0xMTYyMGZlZTE4YTUvKyJdLCJzdWJzY3JpYmUiOlsiY2xvdWQvNDIwZTVjYjEtM2EwMS00YzYyLThlNWEtZjcxMzdhODVlZjEyLysiLCJjbG91ZC8yMmE0ZjAzOS0zYzZiLTQ0YzItYThmMC1iMWM0NmU2NzFlZDIvKyIsImNsb3VkLzhjYzgyZTE3LWQ4MDItNDNiOS04YWRmLTExNjIwZmVlMThhNS8rIl0sInAiOiI4Y2M4MmUxNy1kODAyLTQzYjktOGFkZi0xMTYyMGZlZTE4YTUiLCJvIjoiOTZhMzBmOTktNTMzNi00YTQ4LWE0MTItZTA0NjQwOTI0MWZhIiwiaWF0IjoxNDc5Njk2NDYxfQ.bkv5Om2SSqBnSv-St9-7sSw5ifbQYPozOMr6YkxZBlA',
     deviceId: '8cc82e17-d802-43b9-8adf-11620fee18a5',
     clusterId: '420e5cb1-3a01-4c62-8e5a-f7137a85ef12',
@@ -16,12 +17,16 @@ const il = new InfiniteLoop();
 let status = {transmission: true, hdd: true};
 
 const check = () => {
-    cmd.get('/etc/init.d/transmission-daemon status', (data) => {
+    cmd.get('service transmission-daemon status', (data) => {
             if (!includes(data, 'Active: active (running)')) {
                 isaax.log('transmission is dead');
                 statusLED.blink();
             } else {
                 statusLED.heartbeat();
+            }
+            if (includes(data, 'Network is unreachable')) {
+                isaax.log('transmission web-interface down, restarting...');
+                cmd.run('service transmission-daemon restart');
             }
         }
     );
@@ -34,4 +39,13 @@ const check = () => {
     );
 };
 
-il.add(check).setInterval(5000).run();
+series([
+    (ntpDone) => {cmd.get('ntpdate kh.pool.ntp.org', ntpDone)},
+    (timeData, loopStarted) => {
+        isaax.log(timeData);
+        isaax.log('starting main loop...');
+        il.add(check).setInterval(5000).run();
+        loopStarted();
+    }
+]);
+

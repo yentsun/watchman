@@ -19,12 +19,14 @@ let status = {transmission: true, hdd: true};
 const check = () => {
     cmd.get('service transmission-daemon status', (data) => {
             if (!includes(data, 'Active: active (running)')) {
-                isaax.log('transmission is dead');
+                console.log('transmission is not running');
+                isaax.log('transmission is not running');
                 statusLED.blink();
             } else {
                 statusLED.heartbeat();
             }
             if (includes(data, 'Network is unreachable')) {
+                console.log('transmission web-interface down, restarting...');
                 isaax.log('transmission web-interface down, restarting...');
                 cmd.run('service transmission-daemon restart');
             }
@@ -32,20 +34,28 @@ const check = () => {
     );
     cmd.get('df', (data) => {
             if (!includes(data, '/mnt/toshiba')) {
-                statusLED.turnOff();
+                console.log('hdd unmount');
                 isaax.log('hdd unmount');
+                statusLED.turnOff();
             }
         }
     );
 };
 
 series([
-    (ntpDone) => {cmd.get('ntpdate kh.pool.ntp.org', ntpDone)},
-    (timeData, loopStarted) => {
-        isaax.log(timeData);
+    (ntpDone) => {
+        isaax.log('updating time...');
+        cmd.get('ntpdate kh.pool.ntp.org', (error, data) => {
+            ntpDone(null);
+        })
+    },
+    (loopStarted) => {
         isaax.log('starting main loop...');
         il.add(check).setInterval(5000).run();
         loopStarted();
     }
-]);
+], (error) => {
+    if (error) console.log(error);
+    console.log('bootstrap done');
+});
 
